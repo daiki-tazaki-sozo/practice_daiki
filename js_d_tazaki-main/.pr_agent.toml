@@ -1,0 +1,22 @@
+[pr_reviewer]
+extra_instructions="""
+Please review the code from the following perspectives:
+- Code readability (Are appropriate variable and function names used?)
+- Performance optimization (Are there any unnecessary loops or processes?)
+- Security concerns (Are there any vulnerabilities?)
+- Test code coverage (Are appropriate tests written?)
+- Adherence to coding standards (Does it follow the project's guidelines?)
+- Proper error handling (Is exception handling done appropriately?)
+- Component design (Is the component design appropriate?)
+Please provide all feedback in Japanese.
+"""
+
+[pr_description]
+extra_instructions="""
+Please use Japanese.
+"""
+
+[pr_code_suggestions]
+extra_instructions="""
+Please use Japanese.
+"""

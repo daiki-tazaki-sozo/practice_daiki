@@ -1,0 +1,47 @@
+on:
+  pull_request:
+    branches: [main]
+    types: [opened, reopened, ready_for_review, review_requested]
+  issue_comment:
+
+jobs:
+  pr_agent_job:
+    if: ${{ github.event.sender.type != 'Bot' }}
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+      pull-requests: write
+      contents: write
+    name: Run pr agent on every pull request, respond to user comments
+
+    steps:
+      - name: repository checkout
+        uses: actions/checkout@v4
+
+      - name: Create tmp pr action directory
+        working-directory: ./tmp
+        run: mkdir pr_agent
+
+      - name: Create dynamic action step
+        uses: Pianoopera/create-dynamic-github-app-action-step/.github/actions@main
+        with:
+          working-dir: tmp/pr_agent
+          step_name: "Create a token"
+          uses_action: ${{ github.repository_owner }}/create-github-app-token@main
+
+      - name: Create a token
+        uses: ./tmp/pr_agent
+        id: app-token
+        with:
+          app_id: ${{ secrets.PR_AGENT_APP_ID }}
+          private_key: ${{ secrets.PR_AGENT_PRIVATE_KEY }}
+
+      - name: Clone
+        run: |
+          git clone https://x-access-token:${{ steps.app-token.outputs.token }}@github.com/ALCHEMY-curriculum/alchemy-curriculum-pr-agent-common-actions.git common_pr_agent
+
+      - name: Install dependencies & Checkout workflow
+        uses: ./common_pr_agent/v2checkout_workflow
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          oepnai_key: ${{ secrets.OPENAI_KEY }}

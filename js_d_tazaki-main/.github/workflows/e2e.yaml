@@ -1,0 +1,37 @@
+name: e2e test
+
+on:
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Create dynamic action step
+        uses: Pianoopera/create-dynamic-github-app-action-step/.github/actions@main
+        with:
+          working-dir: tmp
+          step_name: "Create a token"
+          uses_action: ${{ github.repository_owner }}/create-github-app-token@main
+
+      - name: Create a token
+        uses: ./tmp
+        id: app-token
+        with:
+          app_id: ${{ secrets.E2E_APP_ID }}
+          private_key: ${{ secrets.E2E_PRIVATE_KEY }}
+
+      - name: Clone
+        run: |
+          git clone https://x-access-token:${{ steps.app-token.outputs.token }}@github.com/ALCHEMY-curriculum/alchemy-curriculum-e2e-common-actions.git common_actions
+
+      - name: Checkout common actions
+        uses: ./common_actions/v2common_workflow
+        with:
+          github_token: ${{ steps.app-token.outputs.token }}
