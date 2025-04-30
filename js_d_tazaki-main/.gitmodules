@@ -1,0 +1,3 @@
+[submodule "common_actions"]
+	path = common_actions
+	url = https://github.com/ALCHEMY-curriculum/alchemy-curriculum-e2e-common-actions
